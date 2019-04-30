@@ -7,7 +7,20 @@ PT="ProfitTrailer"
 PT_DIR=${APP}/${PT}
 PT_ZIP=${BASE}/${PT}-${PT_VERSION}.zip
 PT_JAR=${PT_DIR}/${PT}.jar
-PT_START="java -Djava.net.preferIPv4Stack=true -Dsun.stdout.encoding=UTF-8 -Dio.netty.allocator.numDirectArenas=0 -Djdk.nio.maxCachedBufferSize=262144 -XX:+UseSerialGC -XX:+UseStringDeduplication -Xms64m -Xmx512m -XX:CompressedClassSpaceSize=300m -XX:MaxMetaspaceSize=128m -jar $PT_JAR"
+
+JAVA_OPTS="$JAVA_OPTS -XX:+IgnoreUnrecognizedVMOptions"           # Don't barf if we see an option we don't understand (e.g. Java 9 option on Java 7/8)
+JAVA_OPTS="$JAVA_OPTS -Djava.awt.headless=true"                   # don't try to start AWT. Not sure this does anything but better safe than wasting memory
+JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"                      # Use UTF-8
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.net=ALL-UNNAMED" # Allow dynamically adding JARs to classpath (Java 9)
+JAVA_OPTS="$JAVA_OPTS --add-modules=java.xml.bind"                # Enable access to java.xml.bind module (Java 9)
+
+JAVA_OPTS="$JAVA_OPTS -XX:+UseConcMarkSweepGC"
+JAVA_OPTS="$JAVA_OPTS -Xmx256m"
+JAVA_OPTS="$JAVA_OPTS -Xms256m"
+
+echo "Using these JAVA_OPTS: ${JAVA_OPTS}"
+
+PT_START="java $JAVA_OPTS -jar $PT_JAR"
 
 [ -d "$PT_DIR" ] || mkdir -p "$PT_DIR" || {
    echo "Error: no $PT_DIR found and could not make it. Exiting."; exit -1;
