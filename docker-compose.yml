@@ -1,17 +1,9 @@
 version: '3'
 
 services:
-  bot1:
+  BOT:
+    network_mode: "host"
     build: .
     volumes:
-      - ./bot1:/app/ProfitTrailer
+      - /volume2/docker/PT:/app/ProfitTrailer
     restart: always
-    ports:
-      - "8081:8081/tcp"
-#  bot2:
-#    build: .
-#    volumes:
-#      - ./bot2:/app/ProfitTrailer
-#    restart: always
-#    ports:
-#      - "8081:8081/tcp"
